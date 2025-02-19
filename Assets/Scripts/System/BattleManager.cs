@@ -23,6 +23,7 @@ public class BattleManager : MonoBehaviour
     private AnimationCommands _animationCommands;
     private FadeController _fadeController;
     private UIManager _uiManager;
+    private CameraController _cameraController;
     private int turnCount = 1;
 
     public Transform[] GetAllyTeamPositions => _allyTeamPositions;
@@ -42,6 +43,8 @@ public class BattleManager : MonoBehaviour
         _animationCommands = FindFirstObjectByType<AnimationCommands>();
         _fadeController = FindFirstObjectByType<FadeController>();
         _uiManager = FindFirstObjectByType<UIManager>();
+        _cameraController = FindFirstObjectByType<CameraController>();
+
         _uiManager.SetResultText(string.Empty);
 
         GenerateCharacters();
@@ -237,6 +240,8 @@ public class BattleManager : MonoBehaviour
                 _animationCommands.FasterCharacterMove(attackerObject.transform, defenderObject.transform).Forget();
                 _animationCommands.SlowerCharacterMove(defenderObject.transform, attackerObject.transform).Forget();
 
+                _cameraController.SetTargetGroup(attackerObject.transform, defenderObject.transform);
+
                 if (defender.GetTarget == attacker && defender.GetSelectedSkill.GetEffectTiming != EffectTiming.None)
                 {
                     // 双方がターゲットにし合っている -> マッチ発生
@@ -295,6 +300,7 @@ public class BattleManager : MonoBehaviour
                     _animationCommands.DeadEffects(defenderObject).Forget();
                 }
 
+                _cameraController.SetTargetGroup(_allyTeamObjects[1].transform, _enemyTeamObjects[2].transform);
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
             }
 

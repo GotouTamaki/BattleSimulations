@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70dd52f2eaed99a43b8e61d21f9b3feb, type: 3}
+  m_Name: PlayerTeamData
+  m_EditorClassIdentifier: 
+  _characters:
+  - _id: 0
+    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+    _hp: 0
+    _atk: 0
+    _def: 0
+    _spd: 0
+    _isAlly: 0
+    _transform: {fileID: 0}
+    _skills:
+    - rid: 7980726417298031108
+  references:
+    version: 2
+    RefIds:
+    - rid: 7980726417298031108
+      type: {class: AttackSkill, ns: , asm: Assembly-CSharp}
+      data:
+        _id: 0
+        _name: "\u30D1\u30EF\u30FC\u30B9\u30E9\u30C3\u30B7\u30E5"
+        _coinCount: 1
+        _basePower: 5
+        _coinPower: 10
+        _effectTiming: 0

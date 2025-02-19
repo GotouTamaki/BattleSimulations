@@ -5,7 +5,6 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using Random = UnityEngine.Random;
-using UnityEditor.Experimental.GraphView;
 
 public class BattleManager : MonoBehaviour
 {
@@ -46,6 +45,7 @@ public class BattleManager : MonoBehaviour
         _cameraController = FindFirstObjectByType<CameraController>();
 
         _uiManager.SetResultText(string.Empty);
+        _uiManager.SetEnableRestartButton(false);
 
         GenerateCharacters();
 #if UNITY_EDITOR
@@ -163,7 +163,9 @@ public class BattleManager : MonoBehaviour
             }
 
             _uiManager.SetAllySkillText(string.Empty);
+            _uiManager.SetAllySkillCoinPowerText(string.Empty);
             _uiManager.SetEnemySkillText(string.Empty);
+            _uiManager.SetEnemySkillCoinPowerText(string.Empty);
 
             _fadeController.FadeIn(_fadeController.GetFadeTime).Forget();
             await UniTask.Delay(TimeSpan.FromSeconds(_fadeController.GetFadeTime));
@@ -246,7 +248,26 @@ public class BattleManager : MonoBehaviour
                 {
                     // 双方がターゲットにし合っている -> マッチ発生
                     int attackerPower = attacker.GetSelectedSkill.TossCoins();
+
+                    if (attacker.GetIsAlly)
+                    {
+                        _uiManager.SetAllySkillCoinPowerText($"{attackerPower}");
+                    }
+                    else
+                    {
+                        _uiManager.SetEnemySkillCoinPowerText($"{attackerPower}");
+                    }
+
                     int defenderPower = defender.GetSelectedSkill.TossCoins();
+
+                    if (defender.GetIsAlly)
+                    {
+                        _uiManager.SetAllySkillCoinPowerText($"{defenderPower}");
+                    }
+                    else
+                    {
+                        _uiManager.SetEnemySkillCoinPowerText($"{defenderPower}");
+                    }
 
 #if UNITY_EDITOR
                     Debug.Log($"<color=red>{attacker.GetName} : {attacker.GetSelectedSkill.GetName} vs {defender.GetName} : {defender.GetSelectedSkill.GetName}"
@@ -258,12 +279,21 @@ public class BattleManager : MonoBehaviour
 #if UNITY_EDITOR
                         Debug.Log($"<color=yellow>{attacker.GetName} がマッチに勝利！</color>");
 #endif
+                        if (attacker.GetIsAlly)
+                        {
+                            _uiManager.SetAllySkillCoinPowerText($"<color=red>{attackerPower}</color>");
+                        }
+                        else
+                        {
+                            _uiManager.SetEnemySkillCoinPowerText($"<color=red>{attackerPower}</color>");
+                        }
+
                         defender.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.OnDefend, defenderPower);
 
-                        int coinPower = attacker.GetSelectedSkill.TossCoins();
+                        attackerPower = attacker.GetSelectedSkill.TossCoins();
                         attacker.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.MatchWin, attackerPower);
                         defender.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.MatchLose, defenderPower);
-                        attacker.GetSelectedSkill.UseSkill(attacker, defender, coinPower);
+                        attacker.GetSelectedSkill.UseSkill(attacker, defender, attackerPower);
 
                         defender.SelectSkill(new NoneSkill());
                     }
@@ -272,12 +302,22 @@ public class BattleManager : MonoBehaviour
 #if UNITY_EDITOR
                         Debug.Log($"<color=yellow>{defender.GetName} がマッチに勝利！</color>");
 #endif
+
+                        if (defender.GetIsAlly)
+                        {
+                            _uiManager.SetAllySkillCoinPowerText($"<color=red>{defenderPower}</color>");
+                        }
+                        else
+                        {
+                            _uiManager.SetEnemySkillCoinPowerText($"<color=red>{defenderPower}</color>");
+                        }
+
                         attacker.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.OnDefend, attackerPower);
 
-                        int coinPower = defender.GetSelectedSkill.TossCoins();
-                        defender.GetSelectedSkill.ActivateSkillEffect(defender, attacker, EffectTiming.MatchWin, coinPower);
-                        attacker.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.MatchLose, coinPower);
-                        defender.GetSelectedSkill.UseSkill(defender, attacker, coinPower);
+                        defenderPower = defender.GetSelectedSkill.TossCoins();
+                        defender.GetSelectedSkill.ActivateSkillEffect(defender, attacker, EffectTiming.MatchWin, defenderPower);
+                        attacker.GetSelectedSkill.ActivateSkillEffect(attacker, defender, EffectTiming.MatchLose, attackerPower);
+                        defender.GetSelectedSkill.UseSkill(defender, attacker, defenderPower);
 
                         attacker.SelectSkill(new NoneSkill());
                     }
@@ -285,8 +325,22 @@ public class BattleManager : MonoBehaviour
                 else
                 {
                     // 一方的に攻撃
-                    int coinPower = attacker.GetSelectedSkill.TossCoins();
-                    attacker.GetSelectedSkill.UseSkill(attacker, defender, coinPower);
+                    int attackerPower = attacker.GetSelectedSkill.TossCoins();
+
+                    if (attacker.GetIsAlly)
+                    {
+                        _uiManager.SetAllySkillCoinPowerText($"<color=red>{attackerPower}</color>");
+                        _uiManager.SetEnemySkillText(string.Empty);
+                        _uiManager.SetEnemySkillCoinPowerText(string.Empty);
+                    }
+                    else
+                    {
+                        _uiManager.SetEnemySkillCoinPowerText($"<color=red>{attackerPower}</color>");
+                        _uiManager.SetAllySkillText(string.Empty);
+                        _uiManager.SetAllySkillCoinPowerText(string.Empty);
+                    }
+
+                    attacker.GetSelectedSkill.UseSkill(attacker, defender, attackerPower);
                 }
 
                 // 死亡判定
@@ -334,5 +388,6 @@ public class BattleManager : MonoBehaviour
         _uiManager.SetResultText(result);
         await UniTask.Delay(TimeSpan.FromSeconds(2f));
         _uiManager.SetResultText(string.Empty);
+        _uiManager.SetEnableRestartButton(true);
     }
 }

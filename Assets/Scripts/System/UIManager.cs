@@ -1,16 +1,30 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private Text _allySkillText;
+    [SerializeField] private Text _enemySkillText;
+    [SerializeField] private Text _resultText;
+
+    public Text GetAllySkillText => _allySkillText;
+
+    public Text GetEnemySkillText => _enemySkillText;
+
+    public Text GetResultText => _resultText;
+
+    public void SetAllySkillText(string text)
     {
-        
+        _allySkillText.text = text;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetEnemySkillText(string text)
     {
-        
+        _enemySkillText.text = text;
+    }
+
+    public void SetResultText(string text)
+    {
+        _resultText.text = text;
     }
 }

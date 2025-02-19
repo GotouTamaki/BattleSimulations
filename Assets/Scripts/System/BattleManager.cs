@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using Random = UnityEngine.Random;
+using UnityEditor.Experimental.GraphView;
 
 public class BattleManager : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class BattleManager : MonoBehaviour
     //[SerializeField] private int _enemyGenerateCount = 5;
 
     private AnimationCommands _animationCommands;
+    private FadeController _fadeController;
+    private UIManager _uiManager;
     private int turnCount = 1;
 
     public Transform[] GetAllyTeamPositions => _allyTeamPositions;
@@ -37,6 +40,10 @@ public class BattleManager : MonoBehaviour
     private void OnEnable()
     {
         _animationCommands = FindFirstObjectByType<AnimationCommands>();
+        _fadeController = FindFirstObjectByType<FadeController>();
+        _uiManager = FindFirstObjectByType<UIManager>();
+        _uiManager.SetResultText(string.Empty);
+
         GenerateCharacters();
 #if UNITY_EDITOR
         DisplayCharacterList();
@@ -152,6 +159,12 @@ public class BattleManager : MonoBehaviour
                 _enemyTeamObjects[i].transform.position = _enemyTeamPositions[i].transform.position;
             }
 
+            _uiManager.SetAllySkillText(string.Empty);
+            _uiManager.SetEnemySkillText(string.Empty);
+
+            _fadeController.FadeIn(_fadeController.GetFadeTime).Forget();
+            await UniTask.Delay(TimeSpan.FromSeconds(_fadeController.GetFadeTime));
+
             // ターン開始前
             foreach (var character in _allyTeamList.Concat(_enemyTeamList))
             {
@@ -198,22 +211,26 @@ public class BattleManager : MonoBehaviour
                 {
                     attackerObject = _allyTeamObjects[attacker.GetId];
                     _animationCommands.SetTargetColor(_allyTeamObjects, attackerObject);
+                    _uiManager.SetAllySkillText(attacker.GetSelectedSkill.GetName);
                 }
                 else
                 {
                     attackerObject = _enemyTeamObjects[attacker.GetId];
                     _animationCommands.SetTargetColor(_enemyTeamObjects, attackerObject);
+                    _uiManager.SetEnemySkillText(attacker.GetSelectedSkill.GetName);
                 }
 
                 if (defender.GetIsAlly)
                 {
                     defenderObject = _allyTeamObjects[defender.GetId];
                     _animationCommands.SetTargetColor(_allyTeamObjects, defenderObject);
+                    _uiManager.SetAllySkillText(defender.GetSelectedSkill.GetName);
                 }
                 else
                 {
                     defenderObject = _enemyTeamObjects[defender.GetId];
                     _animationCommands.SetTargetColor(_enemyTeamObjects, defenderObject);
+                    _uiManager.SetEnemySkillText(defender.GetSelectedSkill.GetName);
                 }
 
                 // ターゲットに近づく
@@ -295,12 +312,21 @@ public class BattleManager : MonoBehaviour
             _animationCommands.ResetTargetColor(_enemyTeamObjects);
 
             turnCount++;
-            await UniTask.Delay(TimeSpan.FromSeconds(2f));
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            _fadeController.FadeOut(_fadeController.GetFadeTime).Forget();
+            await UniTask.Delay(TimeSpan.FromSeconds(_fadeController.GetFadeTime));
         }
 
+        string result = string.Empty;
+
 #if UNITY_EDITOR
-        string result = _allyTeamList.Any(c => c.IsAlive) ? "味方の勝利！" : "敵の勝利！";
+        result = _allyTeamList.Any(c => c.IsAlive) ? "味方の勝利！" : "敵の勝利！";
         Debug.Log($"<color=yellow>{result}</color>");
 #endif
+
+        result = _allyTeamList.Any(c => c.IsAlive) ? $"<color=yellow>Victory!!</color>" : "<color=red>Fail...</color>";
+        _uiManager.SetResultText(result);
+        await UniTask.Delay(TimeSpan.FromSeconds(2f));
+        _uiManager.SetResultText(string.Empty);
     }
 }

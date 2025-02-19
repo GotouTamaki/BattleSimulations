@@ -1,46 +1,20 @@
 using UnityEngine;
 
-public class NoneSkill : ISkill
+public class NoneSkill : SkillBase, ISkill
 {
-    private string _name;
-    private int _coinCount;
-    private int _basePower;
-    private int _coinPower;
-    private EffectTiming _effectTiming = EffectTiming.None;
+    public NoneSkill() : base() { }
 
-    public string GetName => _name;
+    public NoneSkill(int id, string name, int coinCount, int basePower, int coinPower, EffectTiming effectTiming)
+    : base(0, "none", 0, 0, 0, EffectTiming.None) { }
 
-    public int GetCoinCount => _coinCount;
-
-    public int GetBasePower => _basePower;
-
-    public int GetCoinPower => _coinPower;
-
-    public EffectTiming GetEffectTiming => _effectTiming;
-
-    public int TossCoins()
-    {
-#if UNITY_EDITOR
-        Debug.Log("none");
-#endif
-        return 0;
-    }
-
-        public void UseSkill(Character user, Character target, int coinPower)
+    public override void UseSkill(Character user, Character target, int coinPower)
     {
 #if UNITY_EDITOR
         Debug.Log("none");
 #endif
     }
 
-    public void ActivateSkillEffect(Character user, Character target, EffectTiming timing)
-    {
-#if UNITY_EDITOR
-        Debug.Log("none");
-#endif
-    }
-
-    public void ApplySkillEffect(Character user, Character target)
+    public override void ApplySkillEffect(Character user, Character target, int coinPower = 0)
     {
 #if UNITY_EDITOR
         Debug.Log("none");

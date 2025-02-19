@@ -9,6 +9,7 @@ using System.Text;
 [System.Serializable]
 public class Character
 {
+    [SerializeField] private int _id;
     [SerializeField] private string _name;
     [SerializeField] private int _hp;
     [SerializeField] private int _atk;
@@ -22,6 +23,8 @@ public class Character
     private Character _target;
 
     public Queue<Buff> Buffs = new Queue<Buff>();
+
+    public int GetId => _id;
 
     public string GetName => _name;
 
@@ -53,8 +56,11 @@ public class Character
     // 死亡判定
     public bool IsAlive => GetHP > 0;
 
-    public Character(string name, int hp, int atk, int def, int spd, List<ISkill> skills)
+    public Character() { }
+
+    public Character(int id, string name, int hp, int atk, int def, int spd, List<ISkill> skills)
     {
+        _id = id;
         _name = name;
         _hp = hp;
         _atk = atk;
@@ -131,6 +137,7 @@ public class Character
     public void DisplayStatusDifference()
     {
         string statusLog = $"{GetName} のステータス: ";
+        statusLog += $"ID: {GetId}";
         statusLog += CompareStatus("HP", PrevHP, GetHP);
         statusLog += CompareStatus("ATK", PrevATK, GetATK);
         statusLog += CompareStatus("DEF", PrevDEF, GetDEF);
@@ -149,18 +156,18 @@ public class Character
     }
 #endif
 
+#if UNITY_EDITOR
     public string GetCharacterInfo()
     {
         StringBuilder info = new StringBuilder();
 
-#if UNITY_EDITOR
-        info.AppendLine($"{GetName} (HP: {GetHP}, ATK: {GetATK}, DEF: {GetDEF}, SPD: {GetSPD})");
+        info.AppendLine($"{GetName} (ID: {GetId}, HP: {GetHP}, ATK: {GetATK}, DEF: {GetDEF}, SPD: {GetSPD})");
         foreach (var skill in GetSkills)
         {
-            info.AppendLine($"  - {skill.GetName} (コイン数: {skill.GetCoinCount}, 基礎威力: {skill.GetBasePower}, コイン威力: {skill.GetCoinPower})");
+            info.AppendLine($"  - {skill.GetName} (ID: {skill.GetId}, コイン数: {skill.GetCoinCount}, 基礎威力: {skill.GetBasePower}, コイン威力: {skill.GetCoinPower})");
         }
-#endif
 
         return info.ToString();
     }
+#endif
 }

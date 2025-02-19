@@ -5738,8 +5738,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79cc9f91d8022eb489018e564eefbf5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllyTeam: []
-  EnemyTeam: []
+  _allyTeam: []
+  _enemyTeam: []
+  _allyGenerateCount: 5
+  _enemyGenerateCount: 5
   references:
     version: 2
     RefIds: []

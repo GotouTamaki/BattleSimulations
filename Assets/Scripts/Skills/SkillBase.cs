@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [System.Serializable]
 public abstract class SkillBase : ISkill
@@ -53,7 +53,7 @@ public abstract class SkillBase : ISkill
         if (_effectTiming == timing)
         {
 #if UNITY_EDITOR
-            Debug.Log(GetEffectTimingColor(timing) + $"{user.GetName} ‚ÌƒXƒLƒ‹ {_name} ‚ÌŒø‰Ê”­“®I" + "</color>");
+            Debug.Log(GetEffectTimingColor(timing) + $"{user.GetName} ã®ã‚¹ã‚­ãƒ« {_name} ã®åŠ¹æœç™ºå‹•ï¼" + "</color>");
 #endif
 
             ApplySkillEffect(user, target, totalCoinPower);

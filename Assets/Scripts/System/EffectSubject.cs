@@ -1,4 +1,4 @@
-public enum EffectSubject
+﻿public enum EffectSubject
 {
     None,
     Ally,

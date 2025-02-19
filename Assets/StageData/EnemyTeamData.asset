@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Characters:
   - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
+    _name: "\u30C8\u30FC\u30B3 0"
     _hp: 100
     _atk: 30
     _def: 10
@@ -29,8 +29,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
+  - _id: 1
+    _name: "\u30C8\u30FC\u30B3 1"
     _hp: 100
     _atk: 30
     _def: 10
@@ -45,8 +45,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
+  - _id: 2
+    _name: "\u30C8\u30FC\u30B3 2"
     _hp: 100
     _atk: 30
     _def: 10
@@ -61,8 +61,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
+  - _id: 3
+    _name: "\u30C8\u30FC\u30B3 3"
     _hp: 100
     _atk: 30
     _def: 10
@@ -77,24 +77,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
-    _hp: 100
-    _atk: 30
-    _def: 10
-    _spd: 5
-    _isAlly: 0
-    _prefab: {fileID: 784550119124629379, guid: a078f8ebbd56ece48aa0bf60017e61c5, type: 3}
-    _animationName:
-    - Attack1
-    - Attack2
-    - Defend1
-    _skills:
-    - rid: 7980726417298031158
-    - rid: 7980726417298031159
-    - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u30C8\u30FC\u30B3"
+  - _id: 4
+    _name: "\u30C8\u30FC\u30B3 4"
     _hp: 100
     _atk: 30
     _def: 10

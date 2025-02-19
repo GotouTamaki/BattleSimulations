@@ -3,29 +3,47 @@ using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using System;
-using Random = UnityEngine.Random;
 using System.Threading;
+using Random = UnityEngine.Random;
 
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] private CharacterTeamData _allyTeamData;
     [SerializeField] private CharacterTeamData _enemyTeamData;
-    [SerializeField] private List<Character> _allyTeam = new List<Character>();
-    [SerializeField] private List<Character> _enemyTeam = new List<Character>();
+    [SerializeField] private Transform[] _allyTeamPositions;
+    [SerializeField] private Transform[] _enemyTeamPositions;
+    [SerializeField] private List<Character> _allyTeamList = new List<Character>();
+    [SerializeField] private List<Character> _enemyTeamList = new List<Character>();
+    private Dictionary<int, GameObject> _allyTeamObjects = new Dictionary<int, GameObject>();
+    private Dictionary<int, GameObject> _enemyTeamObjects = new Dictionary<int, GameObject>();
     //[SerializeField] private int _allyGenerateCount = 5;
     //[SerializeField] private int _enemyGenerateCount = 5;
 
+    private AnimationCommands _animationCommands;
     private int turnCount = 1;
 
-    private void Start()
+    public Transform[] GetAllyTeamPositions => _allyTeamPositions;
+
+    public Transform[] GetEnemyTeamPositions => _enemyTeamPositions;
+
+    public List<Character> AllyTeamList => _allyTeamList;
+
+    public List<Character> EnemyTeamList => _enemyTeamList;
+
+    public Dictionary<int, GameObject> GetAllyTeamObjects => _allyTeamObjects;
+
+    public Dictionary<int, GameObject> GetEnemyTeamObjects => _enemyTeamObjects;
+
+    private void OnEnable()
     {
+        _animationCommands = FindFirstObjectByType<AnimationCommands>();
         GenerateCharacters();
 #if UNITY_EDITOR
         DisplayCharacterList();
 #endif
         // CancellationTokenの取得
-        var ct = this.GetCancellationTokenOnDestroy();
-        BattleRoutine(ct).Forget();
+        //var ct = this.GetCancellationTokenOnDestroy();
+        BattleRoutine().Forget();
     }
 
     private void GenerateCharacters()
@@ -35,17 +53,22 @@ public class BattleManager : MonoBehaviour
             //Character character = CreateRandomCharacter(_allyTeamData.Characters[i].GetId, _allyTeamData.Characters[i].GetName);
             Character character = CreateCharacter(_allyTeamData.Characters[i].GetId, _allyTeamData);
             character.SetIsAlly(true);
+            _allyTeamList.Add(character);
 
-            _allyTeam.Add(character);
+            GameObject characterObject = Instantiate(_allyTeamData.Characters[i].GetPrefab, _allyTeamPositions[i].position, _allyTeamPositions[i].rotation);
+            characterObject.GetComponentInChildren<SpriteRenderer>().flipX = false;
+            _allyTeamObjects.Add(character.GetId, characterObject);
         }
 
         for (int i = 0; i < _enemyTeamData.Characters.Length; i++)
         {
             //Character character = CreateRandomCharacter(_enemyTeamData.Characters[i].GetId, _enemyTeamData.Characters[i].GetName);
             Character character = CreateCharacter(_enemyTeamData.Characters[i].GetId, _enemyTeamData);
-            character.SetIsAlly(false);
+            _enemyTeamList.Add(character);
 
-            _enemyTeam.Add(character);
+            GameObject characterObject = Instantiate(_enemyTeamData.Characters[i].GetPrefab, _enemyTeamPositions[i].position, _enemyTeamPositions[i].rotation);
+            characterObject.GetComponentInChildren<SpriteRenderer>().flipX = true;
+            _enemyTeamObjects.Add(character.GetId, characterObject);
         }
     }
 
@@ -97,29 +120,40 @@ public class BattleManager : MonoBehaviour
         Debug.Log("<color=white>=== キャラクター & スキル一覧 ===</color>");
 
         Debug.Log("<color=blue>=== 味方チーム ===</color>");
-        foreach (var character in _allyTeam)
+        foreach (var character in _allyTeamList)
         {
             Debug.Log(character.GetCharacterInfo());
         }
 
         Debug.Log("<color=red>=== 敵チーム ===</color>");
-        foreach (var character in _enemyTeam)
+        foreach (var character in _enemyTeamList)
         {
             Debug.Log(character.GetCharacterInfo());
         }
     }
 #endif
 
-    private async UniTaskVoid BattleRoutine(CancellationToken ct)
+    private async UniTaskVoid BattleRoutine()
     {
-        while (_allyTeam.Any(c => c.IsAlive) && _enemyTeam.Any(c => c.IsAlive))
+        while (_allyTeamList.Any(c => c.IsAlive) && _enemyTeamList.Any(c => c.IsAlive))
         {
 #if UNITY_EDITOR
             Debug.Log($"<color=white>=== ターン {turnCount} ===</color>");
 #endif
 
+            // 座標の初期化
+            for (int i = 0; _allyTeamPositions.Length > i; i++)
+            {
+                _allyTeamObjects[i].transform.position = _allyTeamPositions[i].transform.position;
+            }
+
+            for (int i = 0; _enemyTeamPositions.Length > i; i++)
+            {
+                _enemyTeamObjects[i].transform.position = _enemyTeamPositions[i].transform.position;
+            }
+
             // ターン開始前
-            foreach (var character in _allyTeam.Concat(_enemyTeam))
+            foreach (var character in _allyTeamList.Concat(_enemyTeamList))
             {
                 character.SavePreviousStatus();
 
@@ -128,7 +162,7 @@ public class BattleManager : MonoBehaviour
                 character.SelectSkill(UnityEngine.Random.Range(0, character.GetSkills.Count));
 
                 // 生きている敵対チームのキャラクターを狙う
-                List<Character> potentialTargets = character.GetIsAlly ? _enemyTeam : _allyTeam;
+                List<Character> potentialTargets = character.GetIsAlly ? _enemyTeamList : _allyTeamList;
                 potentialTargets = potentialTargets.Where(_ => _.IsAlive).ToList();
                 character.SelectTarget(potentialTargets, UnityEngine.Random.Range(0, potentialTargets.Count));
 
@@ -138,7 +172,7 @@ public class BattleManager : MonoBehaviour
             }
 
             // ターン開始時のスキル発動（赤）
-            foreach (var character in _allyTeam.Concat(_enemyTeam))
+            foreach (var character in _allyTeamList.Concat(_enemyTeamList))
             {
                 if (!character.IsAlive) continue;
 
@@ -146,7 +180,7 @@ public class BattleManager : MonoBehaviour
             }
 
             // 速度順でターン進行
-            List<Character> allCharacters = _allyTeam.Concat(_enemyTeam).OrderByDescending(c => c.GetSPD).ToList();
+            List<Character> allCharacters = _allyTeamList.Concat(_enemyTeamList).OrderByDescending(c => c.GetSPD).ToList();
 
             foreach (var character in allCharacters)
             {
@@ -156,6 +190,35 @@ public class BattleManager : MonoBehaviour
 
                 Character attacker = character;
                 Character defender = attacker.GetTarget;
+
+                GameObject attackerObject = null;
+                GameObject defenderObject = null;
+
+                if (attacker.GetIsAlly)
+                {
+                    attackerObject = _allyTeamObjects[attacker.GetId];
+                    _animationCommands.SetTargetColor(_allyTeamObjects, attackerObject);
+                }
+                else
+                {
+                    attackerObject = _enemyTeamObjects[attacker.GetId];
+                    _animationCommands.SetTargetColor(_enemyTeamObjects, attackerObject);
+                }
+
+                if (defender.GetIsAlly)
+                {
+                    defenderObject = _allyTeamObjects[defender.GetId];
+                    _animationCommands.SetTargetColor(_allyTeamObjects, defenderObject);
+                }
+                else
+                {
+                    defenderObject = _enemyTeamObjects[defender.GetId];
+                    _animationCommands.SetTargetColor(_enemyTeamObjects, defenderObject);
+                }
+
+                // ターゲットに近づく
+                _animationCommands.FasterCharacterMove(attackerObject.transform, defenderObject.transform).Forget();
+                _animationCommands.SlowerCharacterMove(defenderObject.transform, attackerObject.transform).Forget();
 
                 if (defender.GetTarget == attacker && defender.GetSelectedSkill.GetEffectTiming != EffectTiming.None)
                 {
@@ -204,24 +267,39 @@ public class BattleManager : MonoBehaviour
                     attacker.GetSelectedSkill.UseSkill(attacker, defender, coinPower);
                 }
 
+                // 死亡判定
+                if (!attacker.IsAlive)
+                {
+                    _animationCommands.DeadEffects(attackerObject).Forget();
+                }
+
+                if (!defender.IsAlive)
+                {
+                    _animationCommands.DeadEffects(defenderObject).Forget();
+                }
+
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
             }
 
 #if UNITY_EDITOR
             // ターン終了時にステータスの差分を表示
             Debug.Log($"<color=cyan>=== ターン {turnCount} 終了時のステータス ===</color>");
-            foreach (var character in _allyTeam.Concat(_enemyTeam))
+            foreach (var character in _allyTeamList.Concat(_enemyTeamList))
             {
                 character.DisplayStatusDifference();
             }
 #endif
+
+            await UniTask.Delay(TimeSpan.FromSeconds(2f));
+            _animationCommands.ResetTargetColor(_allyTeamObjects);
+            _animationCommands.ResetTargetColor(_enemyTeamObjects);
 
             turnCount++;
             await UniTask.Delay(TimeSpan.FromSeconds(2f));
         }
 
 #if UNITY_EDITOR
-        string result = _allyTeam.Any(c => c.IsAlive) ? "味方の勝利！" : "敵の勝利！";
+        string result = _allyTeamList.Any(c => c.IsAlive) ? "味方の勝利！" : "敵の勝利！";
         Debug.Log($"<color=yellow>{result}</color>");
 #endif
     }

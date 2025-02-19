@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Characters:
   - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+    _name: "\u5927\u9CE5\u3053\u306F\u304F 0"
     _hp: 100
     _atk: 30
     _def: 10
@@ -29,8 +29,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+  - _id: 1
+    _name: "\u5927\u9CE5\u3053\u306F\u304F 1"
     _hp: 100
     _atk: 30
     _def: 10
@@ -45,8 +45,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+  - _id: 2
+    _name: "\u5927\u9CE5\u3053\u306F\u304F 2"
     _hp: 100
     _atk: 30
     _def: 10
@@ -61,8 +61,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+  - _id: 3
+    _name: "\u5927\u9CE5\u3053\u306F\u304F 3"
     _hp: 100
     _atk: 30
     _def: 10
@@ -77,24 +77,8 @@ MonoBehaviour:
     - rid: 7980726417298031158
     - rid: 7980726417298031159
     - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
-    _hp: 100
-    _atk: 30
-    _def: 10
-    _spd: 5
-    _isAlly: 1
-    _prefab: {fileID: 2481362002853374878, guid: 65690f5490e0ff14dabf4694a08e12a4, type: 3}
-    _animationName:
-    - Attack1
-    - Attack2
-    - Defend1
-    _skills:
-    - rid: 7980726417298031158
-    - rid: 7980726417298031159
-    - rid: 7980726417298031160
-  - _id: 0
-    _name: "\u5927\u9CE5\u3053\u306F\u304F"
+  - _id: 4
+    _name: "\u5927\u9CE5\u3053\u306F\u304F 4"
     _hp: 100
     _atk: 30
     _def: 10

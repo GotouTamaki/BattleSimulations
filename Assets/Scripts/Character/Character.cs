@@ -24,9 +24,6 @@ public class Character
     private ISkill _selectedSkill;
     private Character _target;
 
-    private GameObject _sceneGameObject;
-    private Transform _sceneTransform;
-
     public Queue<Buff> Buffs = new Queue<Buff>();
 
     public int GetId => _id;
@@ -45,11 +42,7 @@ public class Character
 
     public GameObject GetPrefab => _prefab;
 
-    public GameObject GetSceneGameObject => _sceneGameObject;
-
     public string[] GetAnimationName => _animationName;
-
-    public Transform GetTransform => _sceneTransform;
 
     public List<ISkill> GetSkills => _skills;
 

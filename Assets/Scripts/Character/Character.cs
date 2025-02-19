@@ -16,6 +16,8 @@ public class Character
     [SerializeField] private int _def;
     [SerializeField] private int _spd;
     [SerializeField] private bool _isAlly;
+    [SerializeField] private Transform _transform;
+    [SerializeField] private string[] _animationName;
     [SerializeField, SerializeReference, SubclassSelector] private List<ISkill> _skills = new List<ISkill>();
 
     // 事前に設定するスキル & ターゲット

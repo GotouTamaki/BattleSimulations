@@ -8,10 +8,12 @@ using System.Threading;
 
 public class BattleManager : MonoBehaviour
 {
+    [SerializeField] private CharacterTeamData _allyTeamData;
+    [SerializeField] private CharacterTeamData _enemyTeamData;
     [SerializeField] private List<Character> _allyTeam = new List<Character>();
     [SerializeField] private List<Character> _enemyTeam = new List<Character>();
-    [SerializeField] private int _allyGenerateCount = 5;
-    [SerializeField] private int _enemyGenerateCount = 5;
+    //[SerializeField] private int _allyGenerateCount = 5;
+    //[SerializeField] private int _enemyGenerateCount = 5;
 
     private int turnCount = 1;
 
@@ -28,40 +30,66 @@ public class BattleManager : MonoBehaviour
 
     private void GenerateCharacters()
     {
-        for (int i = 0; i < _allyGenerateCount; i++)
+        for (int i = 0; i < _allyTeamData.Characters.Length; i++)
         {
-            Character character = CreateRandomCharacter(i + 1, "味方" + (i + 1));
+            //Character character = CreateRandomCharacter(_allyTeamData.Characters[i].GetId, _allyTeamData.Characters[i].GetName);
+            Character character = CreateCharacter(_allyTeamData.Characters[i].GetId, _allyTeamData);
             character.SetIsAlly(true);
+
             _allyTeam.Add(character);
         }
 
-        for (int i = 0; i < _enemyGenerateCount; i++)
+        for (int i = 0; i < _enemyTeamData.Characters.Length; i++)
         {
-            Character character = CreateRandomCharacter(i + 1 + _allyGenerateCount, "敵" + (i + 1));
+            //Character character = CreateRandomCharacter(_enemyTeamData.Characters[i].GetId, _enemyTeamData.Characters[i].GetName);
+            Character character = CreateCharacter(_enemyTeamData.Characters[i].GetId, _enemyTeamData);
             character.SetIsAlly(false);
+
             _enemyTeam.Add(character);
         }
     }
 
-    private Character CreateRandomCharacter(int id, string name)
+    private Character CreateCharacter(int index, CharacterTeamData characterTeamData)
     {
-        int hp = Random.Range(100, 151);
-        int atk = Random.Range(10, 51);
-        int def = Random.Range(1, 21);
-        int spd = Random.Range(10, 51);
+        int id = characterTeamData.Characters[index].GetId;
+        string name = characterTeamData.Characters[index].GetName;
+        int hp = characterTeamData.Characters[index].GetHP;
+        int atk = characterTeamData.Characters[index].GetATK;
+        int def = characterTeamData.Characters[index].GetDEF;
+        int spd = characterTeamData.Characters[index].GetSPD;
 
-        List<ISkill> skills = new List<ISkill>
-        {
-            new AttackSkill(1,  "パワースラッシュ", 1, 5, 10, EffectTiming.MatchWin),
-            new AttackSkill(2,  "フレイムストライク", 2, 7, 3, EffectTiming.MatchLose),
-            //(Random.value > 0.5f)
-            //    ? new DefendSkill("防御", 1, 10, 4, EffectTiming.TurnStart)
-            //    : new EvasionSkill("回避", 1, 4, 10, EffectTiming.OnDefend)
-            new DefendSkill(3,  "防御", 1, 4, 5, EffectTiming.TurnStart)
-        };
+        List<ISkill> skills = characterTeamData.Characters[index].GetSkills;
+        string[] animationName = characterTeamData.Characters[index].GetAnimationName;
 
-        return new Character(id, name, hp, atk, def, spd, skills);
+        return new Character(id, name, hp, atk, def, spd, skills, animationName);
     }
+
+    //private Character CreateRandomCharacter(int id, string name)
+    //{
+    //    int hp = Random.Range(100, 151);
+    //    int atk = Random.Range(10, 51);
+    //    int def = Random.Range(1, 21);
+    //    int spd = Random.Range(10, 51);
+
+    //    List<ISkill> skills = new List<ISkill>
+    //    {
+    //        new AttackSkill(1,  "パワースラッシュ", 1, 5, 10, EffectTiming.MatchWin),
+    //        new AttackSkill(2,  "フレイムストライク", 2, 7, 3, EffectTiming.MatchLose),
+    //        //(Random.value > 0.5f)
+    //        //    ? new DefendSkill("防御", 1, 10, 4, EffectTiming.TurnStart)
+    //        //    : new EvasionSkill("回避", 1, 4, 10, EffectTiming.OnDefend)
+    //        new DefendSkill(3,  "防御", 1, 4, 5, EffectTiming.TurnStart)
+    //    };
+
+    //    string[] animationName = new string[]
+    //    {
+    //        "Attack1",
+    //        "Attack2",
+    //        "Defend1"
+    //    };
+
+    //    return new Character(id, name, hp, atk, def, spd, skills , animationName);
+    //}
 
 #if UNITY_EDITOR
     private void DisplayCharacterList()

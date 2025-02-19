@@ -16,13 +16,16 @@ public class Character
     [SerializeField] private int _def;
     [SerializeField] private int _spd;
     [SerializeField] private bool _isAlly;
-    [SerializeField] private Transform _transform;
+    [SerializeField] private GameObject _prefab;
     [SerializeField] private string[] _animationName;
     [SerializeField, SerializeReference, SubclassSelector] private List<ISkill> _skills = new List<ISkill>();
 
     // 事前に設定するスキル & ターゲット
     private ISkill _selectedSkill;
     private Character _target;
+
+    private GameObject _sceneGameObject;
+    private Transform _sceneTransform;
 
     public Queue<Buff> Buffs = new Queue<Buff>();
 
@@ -39,6 +42,14 @@ public class Character
     public int GetSPD => _spd;
 
     public bool GetIsAlly => _isAlly;
+
+    public GameObject GetPrefab => _prefab;
+
+    public GameObject GetSceneGameObject => _sceneGameObject;
+
+    public string[] GetAnimationName => _animationName;
+
+    public Transform GetTransform => _sceneTransform;
 
     public List<ISkill> GetSkills => _skills;
 
@@ -60,7 +71,7 @@ public class Character
 
     public Character() { }
 
-    public Character(int id, string name, int hp, int atk, int def, int spd, List<ISkill> skills)
+    public Character(int id, string name, int hp, int atk, int def, int spd, List<ISkill> skills, string[] animationName)
     {
         _id = id;
         _name = name;
@@ -69,8 +80,14 @@ public class Character
         _def = def;
         _spd = spd;
         _skills = skills;
+        _animationName = animationName;
 
         SavePreviousStatus(); // 初期状態を記録
+    }
+
+    public void SetId(int id)
+    {
+        _id = id;
     }
 
     public void AddDamage(int damage)
@@ -97,6 +114,11 @@ public class Character
     public void SetIsAlly(bool isAlly)
     {
         _isAlly = isAlly;
+    }
+
+    public void SetAnimationName(int index, string animationName)
+    {
+        _animationName[index] = animationName;
     }
 
     public void SelectSkill(int skillNum)

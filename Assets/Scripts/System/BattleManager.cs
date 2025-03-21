@@ -3,8 +3,6 @@ using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using System;
-using System.Threading;
-using Random = UnityEngine.Random;
 
 public class BattleManager : MonoBehaviour
 {

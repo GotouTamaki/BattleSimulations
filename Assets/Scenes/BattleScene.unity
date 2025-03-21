@@ -2262,10 +2262,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4561777837466614475, guid: b49b3393313a7844e98f71b8d67858f9, type: 3}
-      propertyPath: _nonTargetColor.a
-      value: 0.101960786
-      objectReference: {fileID: 0}
     - target: {fileID: 5074674513363092640, guid: b49b3393313a7844e98f71b8d67858f9, type: 3}
       propertyPath: m_Name
       value: AnimationCommands

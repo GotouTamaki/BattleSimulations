@@ -66,6 +66,7 @@ public class BattleManager : MonoBehaviour
             _allyTeamList.Add(character);
 
             GameObject characterObject = Instantiate(_allyTeamData.Characters[i].GetPrefab, _allyTeamPositions[i].position, _allyTeamPositions[i].rotation);
+            characterObject.transform.SetParent(_allyTeamPositions[i], false);
             characterObject.GetComponentInChildren<SpriteRenderer>().flipX = false;
             _allyTeamObjects.Add(character.GetId, characterObject);
         }
@@ -77,6 +78,7 @@ public class BattleManager : MonoBehaviour
             _enemyTeamList.Add(character);
 
             GameObject characterObject = Instantiate(_enemyTeamData.Characters[i].GetPrefab, _enemyTeamPositions[i].position, _enemyTeamPositions[i].rotation);
+            characterObject.transform.SetParent(_enemyTeamPositions[i], false);
             characterObject.GetComponentInChildren<SpriteRenderer>().flipX = true;
             _enemyTeamObjects.Add(character.GetId, characterObject);
         }

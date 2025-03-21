@@ -3,16 +3,23 @@ using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class AnimationCommands : MonoBehaviour
 {
+    private static readonly int DissolveAmountID = Shader.PropertyToID("_DissolveAmount");
+    private static readonly int MainColorID = Shader.PropertyToID("_MainColor");
+
     [SerializeField] Color _targetColor = Color.white;
     [SerializeField] Color _nonTargetColor = new Color(1f, 1f, 1f, 0.1f);
     [SerializeField] private AnimationCurve _fasterCharacterMatchMoveCurve;
     [SerializeField] private AnimationCurve _slowerCharacterMatchMoveCurve;
     [SerializeField] private float _moveDuration = 1f;
+    [SerializeField] private float _deadAnimationTime = 1f;
     [SerializeField] private ParticleSystem _deadEffect;
     [SerializeField] private Vector3 _deadEffectOffset;
+
+    private Sequence _sequence;
 
     public void SetTargetColor(Dictionary<int, GameObject> _characterObjects, GameObject target)
     {
@@ -20,13 +27,13 @@ public class AnimationCommands : MonoBehaviour
         {
             if (characterObject.Value == target)
             {
-                SpriteRenderer spriteRenderer = characterObject.Value.GetComponentInChildren<SpriteRenderer>();
-                spriteRenderer.color = _targetColor;
+                Material _characterMaterial = characterObject.Value.GetComponentInChildren<SpriteRenderer>().material;
+                _characterMaterial.SetColor(MainColorID, _targetColor);
             }
             else
             {
-                SpriteRenderer spriteRenderer = characterObject.Value.GetComponentInChildren<SpriteRenderer>();
-                spriteRenderer.color = _nonTargetColor;
+                Material _characterMaterial = characterObject.Value.GetComponentInChildren<SpriteRenderer>().material;
+                _characterMaterial.SetColor(MainColorID, _nonTargetColor);
             }
         }
     }
@@ -35,8 +42,8 @@ public class AnimationCommands : MonoBehaviour
     {
         foreach (var characterObject in _characterObjects)
         {
-            SpriteRenderer spriteRenderer = characterObject.Value.GetComponentInChildren<SpriteRenderer>();
-            spriteRenderer.color = _targetColor;
+            Material _characterMaterial = characterObject.Value.GetComponentInChildren<SpriteRenderer>().material;
+            _characterMaterial.SetColor(MainColorID, _targetColor);
         }
     }
 
@@ -58,8 +65,18 @@ public class AnimationCommands : MonoBehaviour
     public async UniTaskVoid DeadEffects(GameObject character)
     {
         await UniTask.Delay(TimeSpan.FromSeconds(_moveDuration));
+
+        Material _characterMaterial = character.GetComponentInChildren<SpriteRenderer>().material;
+        _sequence?.Kill();
+        _sequence = DOTween.Sequence();
+        _sequence.Append(DOTween.To(() => _characterMaterial.GetFloat(DissolveAmountID),
+            a => _characterMaterial.SetFloat(DissolveAmountID, a), 1f, _deadAnimationTime));
+        _sequence.SetUpdate(true);
+
         ParticleSystem deadEffect = Instantiate(_deadEffect, character.transform.position + _deadEffectOffset, _deadEffect.transform.rotation);
-        await UniTask.Delay(TimeSpan.FromSeconds(deadEffect.duration * 1.1f));
+        //await UniTask.Delay(TimeSpan.FromSeconds(deadEffect.duration * 1.1f));
+        await _sequence.Play();
+
         character.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 }

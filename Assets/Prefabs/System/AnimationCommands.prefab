@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f35635043ae46c54faffee061b1e57e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _targetColor: {r: 1, g: 1, b: 1, a: 1}
+  _nonTargetColor: {r: 1, g: 1, b: 1, a: 0.101960786}
   _fasterCharacterMatchMoveCurve:
     serializedVersion: 2
     m_Curve:
@@ -111,5 +113,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _moveDuration: 1
+  _deadAnimationTime: 2
   _deadEffect: {fileID: 9021881801336170991, guid: b44b834232850374e84901c6c54a77eb, type: 3}
   _deadEffectOffset: {x: 0, y: 0, z: 0}

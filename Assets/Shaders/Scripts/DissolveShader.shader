@@ -13,8 +13,8 @@
     {
         Tags { "RenderType"="Opaque" "Queue"="Transparent" "RenderPipeline"="UniversalPipeline" }
 
-        //TODO: Z-Fightingが起きてるため要対策
         Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
         Cull Off // flipXに対応できたら削除
 
         Pass
@@ -56,7 +56,7 @@
             {
                 half4 mainTexture = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
                 half4 baseColor = _MainColor * mainTexture;
-                half noiseValue = SAMPLE_TEXTURE2D(_NoiseTex, sampler_NoiseTex, IN.uv).r * baseColor.a;
+                half noiseValue = SAMPLE_TEXTURE2D(_NoiseTex, sampler_NoiseTex, IN.uv).r * mainTexture.a;
 
                 // エッジの計算
                 float edge = smoothstep(noiseValue, _DissolveAmount + _EdgeWidth, _EdgeWidth);

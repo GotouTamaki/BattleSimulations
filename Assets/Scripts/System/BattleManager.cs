@@ -167,6 +167,8 @@ public class BattleManager : MonoBehaviour
             _uiManager.SetEnemySkillText(string.Empty);
             _uiManager.SetEnemySkillCoinPowerText(string.Empty);
 
+            // 初期カメラターゲット
+            _cameraController.SetTargetGroup(_allyTeamObjects[1].transform, _enemyTeamObjects[2].transform);
             await _fadeController.FadeIn(_fadeController.GetFadeTime);
 
             // ターン開始前

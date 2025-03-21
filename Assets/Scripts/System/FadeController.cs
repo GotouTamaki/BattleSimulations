@@ -16,7 +16,7 @@ public class FadeController : MonoBehaviour
         _fadeMaterial.SetFloat(DissolveAmountID, 1);
     }
 
-    public async UniTaskVoid FadeIn(float fadeTime)
+    public async UniTask FadeIn(float fadeTime)
     {
         // 初期化
         _fadeMaterial.SetFloat(DissolveAmountID, 0f);
@@ -28,7 +28,7 @@ public class FadeController : MonoBehaviour
             _fadeTime).AsyncWaitForCompletion();
     }
 
-    public async UniTaskVoid FadeOut(float fadeTime)
+    public async UniTask FadeOut(float fadeTime)
     {
         // 初期化
         _fadeMaterial.SetFloat(DissolveAmountID, 1f);

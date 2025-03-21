@@ -47,22 +47,22 @@ public class AnimationCommands : MonoBehaviour
         }
     }
 
-    public async UniTaskVoid CharacterMove(Transform fastCharacterTransform, Transform defender)
+    public async UniTask CharacterMove(Transform fastCharacterTransform, Transform defender)
     {
         await fastCharacterTransform.DOMove(defender.position, 1f).AsyncWaitForCompletion();
     }
 
-    public async UniTaskVoid FasterCharacterMove(Transform fastCharacterTransform, Transform slowerCharacterTransform)
+    public async UniTask FasterCharacterMove(Transform fastCharacterTransform, Transform slowerCharacterTransform)
     {
         await fastCharacterTransform.DOMove(slowerCharacterTransform.position, _moveDuration).SetEase(_fasterCharacterMatchMoveCurve).AsyncWaitForCompletion();
     }
 
-    public async UniTaskVoid SlowerCharacterMove(Transform slowerCharacterTransform, Transform fastCharacterTransform)
+    public async UniTask SlowerCharacterMove(Transform slowerCharacterTransform, Transform fastCharacterTransform)
     {
         await slowerCharacterTransform.DOMove(fastCharacterTransform.position, _moveDuration).SetEase(_slowerCharacterMatchMoveCurve).AsyncWaitForCompletion();
     }
 
-    public async UniTaskVoid DeadEffects(GameObject character)
+    public async UniTask DeadEffects(GameObject character)
     {
         await UniTask.Delay(TimeSpan.FromSeconds(_moveDuration));
 

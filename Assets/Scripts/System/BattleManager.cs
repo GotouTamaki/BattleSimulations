@@ -167,8 +167,7 @@ public class BattleManager : MonoBehaviour
             _uiManager.SetEnemySkillText(string.Empty);
             _uiManager.SetEnemySkillCoinPowerText(string.Empty);
 
-            _fadeController.FadeIn(_fadeController.GetFadeTime).Forget();
-            await UniTask.Delay(TimeSpan.FromSeconds(_fadeController.GetFadeTime));
+            await _fadeController.FadeIn(_fadeController.GetFadeTime);
 
             // ターン開始前
             foreach (var character in _allyTeamList.Concat(_enemyTeamList))
@@ -346,15 +345,14 @@ public class BattleManager : MonoBehaviour
                 // 死亡判定
                 if (!attacker.IsAlive)
                 {
-                    _animationCommands.DeadEffects(attackerObject).Forget();
+                    await _animationCommands.DeadEffects(attackerObject);
                 }
 
                 if (!defender.IsAlive)
                 {
-                    _animationCommands.DeadEffects(defenderObject).Forget();
+                    await _animationCommands.DeadEffects(defenderObject);
                 }
 
-                _cameraController.SetTargetGroup(_allyTeamObjects[1].transform, _enemyTeamObjects[2].transform);
                 await UniTask.Delay(TimeSpan.FromSeconds(1f));
             }
 
@@ -373,8 +371,7 @@ public class BattleManager : MonoBehaviour
 
             turnCount++;
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
-            _fadeController.FadeOut(_fadeController.GetFadeTime).Forget();
-            await UniTask.Delay(TimeSpan.FromSeconds(_fadeController.GetFadeTime));
+            await _fadeController.FadeOut(_fadeController.GetFadeTime);
         }
 
         string result = string.Empty;
